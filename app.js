@@ -828,7 +828,7 @@ function populateCategoryFilter() {
     }
 }
 
-function filterTransactions() {
+function filterTransactions(resetPage = true) {
     const searchText = document.getElementById('searchBox')?.value.toLowerCase() || '';
     const yearFilter = document.getElementById('filterYear').value;
     const typeFilter = document.getElementById('filterType').value;
@@ -874,7 +874,10 @@ function filterTransactions() {
         });
     }
     
-    currentModalPage = 1;
+    // Solo reset della pagina se richiesto (non per la ricerca testuale)
+    if (resetPage) {
+        currentModalPage = 1;
+    }
     displayModalTransactions();
 }
 
