@@ -991,11 +991,18 @@ function openModal(modalId) {
     if (modalId === 'viewTransactionsModal') {
         loadAllTransactions();
         // FIX 2: Popola il filtro categorie quando si apre la modale
-        // Aspetta un attimo che le categorie siano caricate
-        setTimeout(() => {
+        // Le categorie dovrebbero già essere caricate da loadCategories() in showMainApp()
+        // Se non lo sono ancora, aspetta che siano disponibili
+        if (categorieEntrate.length > 0 || categorieUscite.length > 0) {
             populateCategoryFilter();
             console.log('🏷️ Category filter populated in modal');
-        }, 100);
+        } else {
+            // Riprova dopo un breve momento se le categorie non sono ancora caricate
+            setTimeout(() => {
+                populateCategoryFilter();
+                console.log('🏷️ Category filter populated in modal (delayed)');
+            }, 100);
+        }
     } else if (modalId === 'manageCategoriesModal') {
         loadCategoriesManagement();
     } else if (modalId === 'addTransactionModal' && !isEditingTransaction) {
