@@ -131,6 +131,13 @@ function showMainApp() {
     if (addTransactionBtn) addTransactionBtn.style.display = isAdmin ? 'inline-block' : 'none';
     if (manageCategoriesBtn) manageCategoriesBtn.style.display = isAdmin ? 'inline-block' : 'none';
     
+    // FIX 1: Sincronizza il limite della tabella principale con il valore del dropdown
+    const mainTableLimitSelect = document.getElementById('mainTableLimit');
+    if (mainTableLimitSelect) {
+        mainTableLimit = parseInt(mainTableLimitSelect.value);
+        console.log(`📊 Main table limit initialized to: ${mainTableLimit}`);
+    }
+    
     // Carica dati iniziali
     loadDashboard();
     loadTransactions();
@@ -815,6 +822,28 @@ function populateCategoryFilter() {
 }
 
 /**
+ * Performs search when the user clicks the search button or presses Enter.
+ * FIX 3: Added dedicated search function for better UX.
+ */
+function performSearch() {
+    console.log('🔍 Performing search...');
+    filterTransactions(true); // Reset to page 1 when searching
+}
+
+/**
+ * Clears the search box and resets filters.
+ * FIX 3: Added clear search function for better UX.
+ */
+function clearSearch() {
+    const searchBox = document.getElementById('searchBox');
+    if (searchBox) {
+        searchBox.value = '';
+        console.log('✕ Search cleared');
+        filterTransactions(true); // Reset to page 1 after clearing
+    }
+}
+
+/**
  * Filters transactions in the modal based on search text and filter criteria.
  * @param {boolean} shouldResetPage - Whether to reset to page 1 after filtering.
  *                                     Set to false for search box (to maintain current page),
@@ -961,6 +990,19 @@ function openModal(modalId) {
     // Carica dati specifici per modal
     if (modalId === 'viewTransactionsModal') {
         loadAllTransactions();
+        // FIX 2: Popola il filtro categorie quando si apre la modale
+        // Le categorie dovrebbero già essere caricate da loadCategories() in showMainApp()
+        // Se non lo sono ancora, aspetta che siano disponibili
+        if (categorieEntrate.length > 0 || categorieUscite.length > 0) {
+            populateCategoryFilter();
+            console.log('🏷️ Category filter populated in modal');
+        } else {
+            // Riprova dopo un breve momento se le categorie non sono ancora caricate
+            setTimeout(() => {
+                populateCategoryFilter();
+                console.log('🏷️ Category filter populated in modal (delayed)');
+            }, 100);
+        }
     } else if (modalId === 'manageCategoriesModal') {
         loadCategoriesManagement();
     } else if (modalId === 'addTransactionModal' && !isEditingTransaction) {
