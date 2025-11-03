@@ -854,7 +854,7 @@ function filterTransactions() {
     
     // Filtro per anno
     if (yearFilter) {
-        filteredTransactions = filteredTransactions.filter(t => new Date(t.data_transazione).getFullYear() == yearFilter);
+        filteredTransactions = filteredTransactions.filter(t => new Date(t.data_transazione).getFullYear() === parseInt(yearFilter));
     }
     
     // Filtro per tipo
@@ -867,9 +867,9 @@ function filterTransactions() {
         const [tipoCategoria, categoriaId] = categoryFilter.split('_');
         filteredTransactions = filteredTransactions.filter(t => {
             if (tipoCategoria === 'entrata') {
-                return t.tipo === 'entrata' && t.categoria_entrata_id == categoriaId;
+                return t.tipo === 'entrata' && t.categoria_entrata_id === parseInt(categoriaId);
             } else {
-                return t.tipo === 'uscita' && t.categoria_uscita_id == categoriaId;
+                return t.tipo === 'uscita' && t.categoria_uscita_id === parseInt(categoriaId);
             }
         });
     }
