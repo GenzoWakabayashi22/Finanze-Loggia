@@ -144,9 +144,9 @@
                         <div class="entries-selector">
                             <label>Mostra:</label>
                             <select id="mainTableLimit" onchange="changeMainTableLimit()">
-                                <option value="10">10</option>
-                                <option value="25">25</option>
+                                <option value="25" selected>25</option>
                                 <option value="50">50</option>
+                                <option value="75">75</option>
                                 <option value="100">100</option>
                             </select>
                             <span>transazioni</span>
@@ -232,6 +232,13 @@
             
             <!-- Filters -->
             <div style="margin-bottom: 20px;">
+                <!-- Search Bar -->
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>🔍 Cerca</label>
+                    <input type="text" id="searchBox" placeholder="Cerca per descrizione, categoria, importo..." 
+                           onkeyup="filterTransactions()" style="width: 100%; padding: 8px; border: 1px solid #cbd5e0; border-radius: 6px;">
+                </div>
+                
                 <div class="flex gap-15">
                     <div class="form-group" style="flex: 1;">
                         <label>Anno</label>
@@ -248,12 +255,18 @@
                         </select>
                     </div>
                     <div class="form-group" style="flex: 1;">
+                        <label>Categoria</label>
+                        <select id="filterCategory" onchange="filterTransactions()">
+                            <option value="">Tutte le categorie</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
                         <label>Mostra</label>
                         <select id="modalTableLimit" onchange="filterTransactions()">
+                            <option value="25">25 per pagina</option>
                             <option value="50">50 per pagina</option>
+                            <option value="75">75 per pagina</option>
                             <option value="100">100 per pagina</option>
-                            <option value="200">200 per pagina</option>
-                            <option value="500">500 per pagina</option>
                         </select>
                     </div>
                 </div>
