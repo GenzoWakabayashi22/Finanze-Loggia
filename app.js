@@ -782,7 +782,7 @@ function populateCategoryFilter() {
     
     categorySelect.innerHTML = '<option value="">Tutte le categorie</option>';
     
-    // Usa le categorie già caricate invece di estrarle dalle transazioni
+    // Use already loaded categories instead of extracting them from transactions
     // Aggiungi optgroup per entrate
     if (categorieEntrate && categorieEntrate.length > 0) {
         const optgroupEntrate = document.createElement('optgroup');
@@ -810,7 +810,7 @@ function populateCategoryFilter() {
     }
 }
 
-function filterTransactions(resetPage = true) {
+function filterTransactions(shouldResetPage = true) {
     const searchText = document.getElementById('searchBox')?.value.toLowerCase() || '';
     const yearFilter = document.getElementById('filterYear').value;
     const typeFilter = document.getElementById('filterType').value;
@@ -856,8 +856,8 @@ function filterTransactions(resetPage = true) {
         });
     }
     
-    // Solo reset della pagina se richiesto (non per la ricerca testuale)
-    if (resetPage) {
+    // Only reset page if requested (not for text search)
+    if (shouldResetPage) {
         currentModalPage = 1;
     }
     displayModalTransactions();
