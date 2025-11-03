@@ -776,13 +776,17 @@ function populateYearFilter() {
     populateCategoryFilter();
 }
 
+/**
+ * Populates the category filter dropdown with all available categories.
+ * Uses globally loaded categorieEntrate and categorieUscite arrays to show
+ * all available categories, not just those with existing transactions.
+ */
 function populateCategoryFilter() {
     const categorySelect = document.getElementById('filterCategory');
     if (!categorySelect) return;
     
     categorySelect.innerHTML = '<option value="">Tutte le categorie</option>';
     
-    // Use already loaded categories instead of extracting them from transactions
     // Aggiungi optgroup per entrate
     if (categorieEntrate && categorieEntrate.length > 0) {
         const optgroupEntrate = document.createElement('optgroup');
@@ -810,6 +814,12 @@ function populateCategoryFilter() {
     }
 }
 
+/**
+ * Filters transactions in the modal based on search text and filter criteria.
+ * @param {boolean} shouldResetPage - Whether to reset to page 1 after filtering.
+ *                                     Set to false for search box (to maintain current page),
+ *                                     true for dropdown filters (to reset to first page).
+ */
 function filterTransactions(shouldResetPage = true) {
     const searchText = document.getElementById('searchBox')?.value.toLowerCase() || '';
     const yearFilter = document.getElementById('filterYear').value;
