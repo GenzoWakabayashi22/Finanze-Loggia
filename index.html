@@ -104,22 +104,6 @@
                         <div class="stat-label">Saldo Filtrato</div>
                         <div class="stat-value saldo" id="saldoFiltrato">€ 0,00</div>
                     </div>
-                    <div class="stat-card" style="background: linear-gradient(135deg, #f7fafc, #edf2f7);">
-                        <div class="stat-label">Transazioni</div>
-                        <div class="stat-value" style="color: #4a5568;" id="numeroTransazioni">0</div>
-                    </div>
-                </div>
-                
-                <!-- Top Categorie (quando non c'è filtro categoria) -->
-                <div id="topCategorie" class="hidden">
-                    <h4 style="margin: 20px 0 15px 0; color: #2d3748;">📊 Top 5 Categorie</h4>
-                    <div id="topCategorieContent"></div>
-                </div>
-                
-                <!-- Dettaglio Categoria (quando c'è filtro categoria) -->
-                <div id="dettaglioCategoria" class="hidden">
-                    <h4 style="margin: 20px 0 15px 0; color: #2d3748;">📋 Dettaglio Categoria</h4>
-                    <div id="dettaglioCategoriaContent"></div>
                 </div>
             </div>
 
@@ -173,6 +157,20 @@
                         <button id="mainPrevBtn" class="btn btn-secondary btn-sm" onclick="changePage(-1)">← Precedente</button>
                         <button id="mainNextBtn" class="btn btn-secondary btn-sm" onclick="changePage(1)">Successiva →</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- Top 5 Categorie - moved from filters section -->
+            <div class="card">
+                <div id="topCategorie" class="hidden">
+                    <h4 style="margin: 0 0 15px 0; color: #2d3748;">📊 Top 5 Categorie</h4>
+                    <div id="topCategorieContent"></div>
+                </div>
+                
+                <!-- Dettaglio Categoria (quando c'è filtro categoria) -->
+                <div id="dettaglioCategoria" class="hidden">
+                    <h4 style="margin: 0 0 15px 0; color: #2d3748;">📋 Dettaglio Categoria</h4>
+                    <div id="dettaglioCategoriaContent"></div>
                 </div>
             </div>
         </div>
