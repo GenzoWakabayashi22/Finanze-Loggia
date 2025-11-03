@@ -175,6 +175,7 @@ async function loadTransactions() {
     
     try {
         const offset = (currentMainPage - 1) * mainTableLimit;
+        console.log(`📊 Loading transactions: page ${currentMainPage}, limit ${mainTableLimit}, offset ${offset}`);
         const response = await fetch(`${API_BASE}/api/transazioni?limit=${mainTableLimit}&offset=${offset}`, {
             headers: {
                 'Authorization': `Bearer ${authToken}`
@@ -188,10 +189,12 @@ async function loadTransactions() {
             
             // Se la risposta è il nuovo formato con oggetto
             if (data.transactions) {
+                console.log(`✅ Loaded ${data.transactions.length} transactions of ${data.total} total`);
                 displayTransactions(data.transactions, container, isAdmin);
                 updateMainPagination(data.transactions.length, data.total, data.hasMore);
             } else {
                 // Compatibilità con il vecchio formato (array diretto)
+                console.log(`✅ Loaded ${data.length} transactions (legacy format)`);
                 displayTransactions(data, container, isAdmin);
                 updateMainPagination(data.length);
             }
@@ -773,39 +776,22 @@ function populateYearFilter() {
     populateCategoryFilter();
 }
 
+/**
+ * Populates the category filter dropdown with all available categories.
+ * Uses globally loaded categorieEntrate and categorieUscite arrays to show
+ * all available categories, not just those with existing transactions.
+ */
 function populateCategoryFilter() {
     const categorySelect = document.getElementById('filterCategory');
     if (!categorySelect) return;
     
-    // Crea un set di tutte le categorie uniche dalle transazioni
-    const categoriesSet = new Map();
-    
-    allTransactions.forEach(t => {
-        if (t.tipo === 'entrata' && t.categoria_entrata) {
-            const key = `entrata_${t.categoria_entrata_id}`;
-            if (!categoriesSet.has(key)) {
-                categoriesSet.set(key, { tipo: 'entrata', nome: t.categoria_entrata, id: t.categoria_entrata_id });
-            }
-        } else if (t.tipo === 'uscita' && t.categoria_uscita) {
-            const key = `uscita_${t.categoria_uscita_id}`;
-            if (!categoriesSet.has(key)) {
-                categoriesSet.set(key, { tipo: 'uscita', nome: t.categoria_uscita, id: t.categoria_uscita_id });
-            }
-        }
-    });
-    
-    // Ordina le categorie
-    const categoriesArray = Array.from(categoriesSet.values());
-    const entrateCategories = categoriesArray.filter(c => c.tipo === 'entrata').sort((a, b) => a.nome.localeCompare(b.nome));
-    const usciteCategories = categoriesArray.filter(c => c.tipo === 'uscita').sort((a, b) => a.nome.localeCompare(b.nome));
-    
     categorySelect.innerHTML = '<option value="">Tutte le categorie</option>';
     
     // Aggiungi optgroup per entrate
-    if (entrateCategories.length > 0) {
+    if (categorieEntrate && categorieEntrate.length > 0) {
         const optgroupEntrate = document.createElement('optgroup');
         optgroupEntrate.label = '💰 Entrate';
-        entrateCategories.forEach(cat => {
+        categorieEntrate.forEach(cat => {
             const option = document.createElement('option');
             option.value = `entrata_${cat.id}`;
             option.textContent = cat.nome;
@@ -815,10 +801,10 @@ function populateCategoryFilter() {
     }
     
     // Aggiungi optgroup per uscite
-    if (usciteCategories.length > 0) {
+    if (categorieUscite && categorieUscite.length > 0) {
         const optgroupUscite = document.createElement('optgroup');
         optgroupUscite.label = '💸 Uscite';
-        usciteCategories.forEach(cat => {
+        categorieUscite.forEach(cat => {
             const option = document.createElement('option');
             option.value = `uscita_${cat.id}`;
             option.textContent = cat.nome;
@@ -828,7 +814,13 @@ function populateCategoryFilter() {
     }
 }
 
-function filterTransactions() {
+/**
+ * Filters transactions in the modal based on search text and filter criteria.
+ * @param {boolean} shouldResetPage - Whether to reset to page 1 after filtering.
+ *                                     Set to false for search box (to maintain current page),
+ *                                     true for dropdown filters (to reset to first page).
+ */
+function filterTransactions(shouldResetPage = true) {
     const searchText = document.getElementById('searchBox')?.value.toLowerCase() || '';
     const yearFilter = document.getElementById('filterYear').value;
     const typeFilter = document.getElementById('filterType').value;
@@ -874,7 +866,10 @@ function filterTransactions() {
         });
     }
     
-    currentModalPage = 1;
+    // Only reset page if requested (not for text search)
+    if (shouldResetPage) {
+        currentModalPage = 1;
+    }
     displayModalTransactions();
 }
 
@@ -947,6 +942,7 @@ function changeModalPage(direction) {
 function changeMainTableLimit() {
     mainTableLimit = parseInt(document.getElementById('mainTableLimit').value);
     currentMainPage = 1;
+    console.log(`🔢 Changed main table limit to: ${mainTableLimit}`);
     loadTransactions();
 }
 
