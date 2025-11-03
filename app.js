@@ -175,6 +175,7 @@ async function loadTransactions() {
     
     try {
         const offset = (currentMainPage - 1) * mainTableLimit;
+        console.log(`📊 Loading transactions: page ${currentMainPage}, limit ${mainTableLimit}, offset ${offset}`);
         const response = await fetch(`${API_BASE}/api/transazioni?limit=${mainTableLimit}&offset=${offset}`, {
             headers: {
                 'Authorization': `Bearer ${authToken}`
@@ -188,10 +189,12 @@ async function loadTransactions() {
             
             // Se la risposta è il nuovo formato con oggetto
             if (data.transactions) {
+                console.log(`✅ Loaded ${data.transactions.length} transactions of ${data.total} total`);
                 displayTransactions(data.transactions, container, isAdmin);
                 updateMainPagination(data.transactions.length, data.total, data.hasMore);
             } else {
                 // Compatibilità con il vecchio formato (array diretto)
+                console.log(`✅ Loaded ${data.length} transactions (legacy format)`);
                 displayTransactions(data, container, isAdmin);
                 updateMainPagination(data.length);
             }
@@ -929,6 +932,7 @@ function changeModalPage(direction) {
 function changeMainTableLimit() {
     mainTableLimit = parseInt(document.getElementById('mainTableLimit').value);
     currentMainPage = 1;
+    console.log(`🔢 Changed main table limit to: ${mainTableLimit}`);
     loadTransactions();
 }
 
