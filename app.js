@@ -777,35 +777,14 @@ function populateCategoryFilter() {
     const categorySelect = document.getElementById('filterCategory');
     if (!categorySelect) return;
     
-    // Crea un set di tutte le categorie uniche dalle transazioni
-    const categoriesSet = new Map();
-    
-    allTransactions.forEach(t => {
-        if (t.tipo === 'entrata' && t.categoria_entrata) {
-            const key = `entrata_${t.categoria_entrata_id}`;
-            if (!categoriesSet.has(key)) {
-                categoriesSet.set(key, { tipo: 'entrata', nome: t.categoria_entrata, id: t.categoria_entrata_id });
-            }
-        } else if (t.tipo === 'uscita' && t.categoria_uscita) {
-            const key = `uscita_${t.categoria_uscita_id}`;
-            if (!categoriesSet.has(key)) {
-                categoriesSet.set(key, { tipo: 'uscita', nome: t.categoria_uscita, id: t.categoria_uscita_id });
-            }
-        }
-    });
-    
-    // Ordina le categorie
-    const categoriesArray = Array.from(categoriesSet.values());
-    const entrateCategories = categoriesArray.filter(c => c.tipo === 'entrata').sort((a, b) => a.nome.localeCompare(b.nome));
-    const usciteCategories = categoriesArray.filter(c => c.tipo === 'uscita').sort((a, b) => a.nome.localeCompare(b.nome));
-    
     categorySelect.innerHTML = '<option value="">Tutte le categorie</option>';
     
+    // Usa le categorie già caricate invece di estrarle dalle transazioni
     // Aggiungi optgroup per entrate
-    if (entrateCategories.length > 0) {
+    if (categorieEntrate && categorieEntrate.length > 0) {
         const optgroupEntrate = document.createElement('optgroup');
         optgroupEntrate.label = '💰 Entrate';
-        entrateCategories.forEach(cat => {
+        categorieEntrate.forEach(cat => {
             const option = document.createElement('option');
             option.value = `entrata_${cat.id}`;
             option.textContent = cat.nome;
@@ -815,10 +794,10 @@ function populateCategoryFilter() {
     }
     
     // Aggiungi optgroup per uscite
-    if (usciteCategories.length > 0) {
+    if (categorieUscite && categorieUscite.length > 0) {
         const optgroupUscite = document.createElement('optgroup');
         optgroupUscite.label = '💸 Uscite';
-        usciteCategories.forEach(cat => {
+        categorieUscite.forEach(cat => {
             const option = document.createElement('option');
             option.value = `uscita_${cat.id}`;
             option.textContent = cat.nome;
