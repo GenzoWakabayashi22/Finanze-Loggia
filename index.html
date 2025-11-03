@@ -235,8 +235,13 @@
                 <!-- Search Bar -->
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label>🔍 Cerca</label>
-                    <input type="text" id="searchBox" placeholder="Cerca per descrizione, categoria, importo..." 
-                           onkeyup="filterTransactions(false)" style="width: 100%; padding: 8px; border: 1px solid #cbd5e0; border-radius: 6px;">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="searchBox" placeholder="Cerca per descrizione, categoria, importo..." 
+                               onkeyup="if(event.key === 'Enter') performSearch()" 
+                               style="flex: 1; padding: 8px; border: 1px solid #cbd5e0; border-radius: 6px;">
+                        <button class="btn" onclick="performSearch()" style="white-space: nowrap;">🔍 Cerca</button>
+                        <button class="btn btn-secondary" onclick="clearSearch()" style="white-space: nowrap;">✕ Pulisci</button>
+                    </div>
                 </div>
                 
                 <div class="flex gap-15">
