@@ -23,18 +23,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Imposta data corrente nel form
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('transactionDate').value = today;
-    
-    // Controlla se l'utente è già loggato
-    if (authToken) {
-        verifyToken();
-    } else {
-        showLogin();
+
+    // PRIORITÀ 1: Controlla prima se c'è un login SSO
+    const ssoLoginSuccess = handleSSOLogin();
+
+    // PRIORITÀ 2: Se non c'è SSO, controlla se l'utente è già loggato
+    if (!ssoLoginSuccess) {
+        if (authToken) {
+            verifyToken();
+        } else {
+            showLogin();
+        }
     }
-    
+
     // Event listeners
     document.getElementById('loginForm').addEventListener('submit', handleLogin);
     document.getElementById('transactionForm').addEventListener('submit', handleAddTransaction);
-    
+
     // Aggiungi event listener per il form categorie se esiste
     const categoryForm = document.getElementById('categoryForm');
     if (categoryForm) {
@@ -43,6 +48,90 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // === GESTIONE AUTENTICAZIONE ===
+
+/**
+ * Gestisce il Single Sign-On (SSO) tramite token JWT nell'URL.
+ * Cerca il parametro 'sso_token' nell'URL, lo decodifica e autentica l'utente.
+ * @returns {boolean} true se il login SSO è stato effettuato, false altrimenti
+ */
+function handleSSOLogin() {
+    try {
+        // Leggi i parametri dall'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const ssoToken = urlParams.get('sso_token');
+
+        // Se non c'è token SSO, ritorna false
+        if (!ssoToken) {
+            console.log('ℹ️ Nessun token SSO trovato nell\'URL');
+            return false;
+        }
+
+        console.log('🔑 Token SSO trovato, elaborazione in corso...');
+
+        // Nascondi il form di login per evitare confusione
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.style.display = 'none';
+        }
+
+        // Decodifica il token JWT
+        const decodedToken = jwt_decode(ssoToken);
+        console.log('✅ Token decodificato:', decodedToken);
+
+        // Estrai il nome dal payload
+        const nome = decodedToken.nome;
+
+        if (!nome) {
+            console.error('❌ Nome non trovato nel token');
+            return false;
+        }
+
+        // Determina il ruolo e le credenziali basate sul nome
+        let username, role;
+
+        if (nome === "Paolo Giulio Gazzano") {
+            // Login come admin
+            username = "admin";
+            role = "admin";
+            console.log('👑 Login SSO come Amministratore');
+        } else {
+            // Login come utente standard
+            username = "Fratello";
+            role = "user";
+            console.log('👤 Login SSO come Utente Standard');
+        }
+
+        // Imposta il token SSO come authToken
+        authToken = ssoToken;
+        localStorage.setItem('authToken', authToken);
+
+        // Crea l'oggetto utente
+        currentUser = {
+            username: username,
+            role: role,
+            nome: nome
+        };
+
+        // Rimuovi il token dall'URL per sicurezza (senza ricaricare la pagina)
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+
+        // Mostra l'applicazione principale
+        showMainApp();
+
+        console.log('✅ Login SSO completato con successo');
+        return true;
+
+    } catch (error) {
+        console.error('❌ Errore durante il login SSO:', error);
+        // In caso di errore, mostra il form di login normale
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.style.display = 'block';
+        }
+        return false;
+    }
+}
 
 async function handleLogin(event) {
     event.preventDefault();
