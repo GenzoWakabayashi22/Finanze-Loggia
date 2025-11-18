@@ -3,6 +3,7 @@ const mysql = require('mysql2/promise');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const session = require('express-session');
 const path = require('path');
 
 const app = express();
@@ -12,6 +13,17 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.static('.'));
+
+// Configurazione sessioni per SSO
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'kilwinning_session_secret_2025',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 24 * 60 * 60 * 1000 // 24 ore
+  }
+}));
 
 // Configurazione database - usa le tue credenziali
 const dbConfig = {
@@ -127,6 +139,79 @@ app.post('/api/auth/login', async (req, res) => {
 // Verifica token
 app.get('/api/auth/verify', authenticateToken, (req, res) => {
   res.json({ valid: true, user: req.user });
+});
+
+// ============================================
+// SSO Login da Tornate
+// ============================================
+app.get('/sso-login', async (req, res) => {
+    try {
+        const token = req.query.token;
+
+        console.log('🔗 [SSO] Richiesta SSO login da Tornate');
+
+        if (!token) {
+            console.log('❌ [SSO] Token mancante');
+            return res.redirect('/login?error=token_missing');
+        }
+
+        // Verifica JWT
+        let decoded;
+        try {
+            decoded = jwt.verify(
+                token,
+                process.env.FINANZE_JWT_SECRET || 'kilwinning_finanze_secret_key_2025_super_secure'
+            );
+        } catch (jwtError) {
+            console.log('❌ [SSO] Token invalido:', jwtError.message);
+            return res.redirect('/login?error=invalid_token');
+        }
+
+        // Valida source
+        if (decoded.source !== 'tornate') {
+            console.log('❌ [SSO] Source invalida:', decoded.source);
+            return res.redirect('/login?error=invalid_source');
+        }
+
+        // Valida campi obbligatori
+        if (!decoded.id || !decoded.username || !decoded.nome) {
+            console.log('❌ [SSO] Payload incompleto');
+            return res.redirect('/login?error=invalid_payload');
+        }
+
+        // Crea sessione utente
+        req.session.user = {
+            id: decoded.id,
+            username: decoded.username,
+            nome: decoded.nome,
+            role: decoded.role || 'user',
+            admin_access: decoded.admin_access || false,
+            grado: decoded.grado,
+            sso_login: true,
+            sso_source: 'tornate',
+            loginTime: new Date().toISOString(),
+            lastActivity: new Date().toISOString()
+        };
+
+        console.log('✅ [SSO] Login successful:', decoded.nome,
+                    `(${decoded.username})`,
+                    decoded.admin_access ? '[ADMIN]' : '[USER]');
+
+        // Salva sessione e redirect
+        req.session.save((err) => {
+            if (err) {
+                console.error('❌ [SSO] Errore salvataggio sessione:', err);
+                return res.redirect('/login?error=session_error');
+            }
+
+            // Redirect alla dashboard
+            res.redirect('/dashboard');
+        });
+
+    } catch (error) {
+        console.error('❌ [SSO] Errore generale:', error);
+        res.redirect('/login?error=server_error');
+    }
 });
 
 // === CATEGORIE ROUTES ===
