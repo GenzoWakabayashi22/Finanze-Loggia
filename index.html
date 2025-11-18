@@ -8,6 +8,48 @@
     <link rel="stylesheet" href="style.css">
     <!-- JWT Decode Library for SSO -->
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <!-- SSO Error Handler -->
+    <script>
+        // Gestione messaggi errore SSO
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+
+            const errorMessages = {
+                'token_missing': 'Token SSO mancante. Effettua login manuale.',
+                'invalid_token': 'Token SSO scaduto o invalido. Effettua login manuale.',
+                'invalid_source': 'Token SSO non valido. Effettua login manuale.',
+                'invalid_payload': 'Dati SSO incompleti. Effettua login manuale.',
+                'session_error': 'Errore creazione sessione. Riprova.',
+                'server_error': 'Errore del server. Riprova più tardi.'
+            };
+
+            if (error && errorMessages[error]) {
+                // Attendi che il DOM sia completamente caricato
+                setTimeout(() => {
+                    // Mostra messaggio errore
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-danger';
+                    alertDiv.style.cssText = 'margin: 20px; padding: 15px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px; color: #721c24;';
+                    alertDiv.innerHTML = `<strong>⚠️ Errore SSO:</strong> ${errorMessages[error]}`;
+
+                    const loginCard = document.querySelector('.login-card');
+                    if (loginCard) {
+                        loginCard.insertBefore(alertDiv, loginCard.firstChild);
+                    }
+
+                    console.log('❌ Errore SSO:', error, errorMessages[error]);
+
+                    // Rimuovi il parametro error dall'URL dopo 5 secondi
+                    setTimeout(() => {
+                        const url = new URL(window.location);
+                        url.searchParams.delete('error');
+                        window.history.replaceState({}, document.title, url.pathname);
+                    }, 5000);
+                }, 100);
+            }
+        });
+    </script>
 </head>
 <body>
     <!-- Login Screen -->
