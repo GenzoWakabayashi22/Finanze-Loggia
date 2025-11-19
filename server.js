@@ -40,7 +40,7 @@ const pool = mysql.createPool(dbConfig);
 // JWT Secret
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
-// Middleware autenticazione
+// Middleware autenticazione - VERSIONE CORRETTA
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -49,12 +49,21 @@ const authenticateToken = (req, res, next) => {
     return res.status(401).json({ error: 'Token richiesto' });
   }
 
+  // Prova prima con JWT_SECRET (login classico)
   jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json({ error: 'Token non valido' });
+    if (!err) {
+      req.user = user;
+      return next();
     }
-    req.user = user;
-    next();
+    
+    // Se fallisce, prova con FINANZE_JWT_SECRET (SSO da Tornate)
+    jwt.verify(token, process.env.FINANZE_JWT_SECRET || 'kilwinning_finanze_secret_key_2025_super_secure', (err2, user2) => {
+      if (err2) {
+        return res.status(403).json({ error: 'Token non valido' });
+      }
+      req.user = user2;
+      next();
+    });
   });
 };
 
