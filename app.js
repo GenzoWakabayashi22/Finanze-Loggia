@@ -191,10 +191,13 @@ async function verifyToken() {
 }
 
 function logout() {
+    // Pulisci tutto
     localStorage.removeItem('authToken');
     authToken = null;
     currentUser = null;
-    showLogin();
+    
+    // Redirect alla home forzando un nuovo caricamento
+    window.location.href = '/';
 }
 
 // === GESTIONE UI ===
