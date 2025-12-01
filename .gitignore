@@ -1,4 +1,12 @@
 node_modules/
+
+# Log files
 *.log
+stderr.log
+stdout.log
+
+# Database files
 *.sql
+
+# Environment files
 .env
