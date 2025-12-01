@@ -29,14 +29,16 @@ Crea un file `.env` con le seguenti variabili:
 
 ```
 DB_HOST=localhost
-DB_USER=jmvvznbb_finanze_user
-DB_PASSWORD=Puntorosso22
-DB_NAME=jmvvznbb_finanze_db
-JWT_SECRET=your-secret-key
-FINANZE_JWT_SECRET=kilwinning_finanze_secret_key_2025_super_secure
-SESSION_SECRET=kilwinning_session_secret_2025
+DB_USER=your_database_user
+DB_PASSWORD=your_database_password
+DB_NAME=your_database_name
+JWT_SECRET=your_jwt_secret_key
+FINANZE_JWT_SECRET=your_finanze_jwt_secret
+SESSION_SECRET=your_session_secret
 NODE_ENV=production
 ```
+
+> **Nota**: Sostituisci i valori placeholder con le credenziali effettive del tuo ambiente.
 
 ### 4. Riavvia il server
 
