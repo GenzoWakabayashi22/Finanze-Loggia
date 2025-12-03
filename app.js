@@ -1114,13 +1114,24 @@ function closeModal(modalId) {
     }
 }
 
-// Chiudi modal cliccando fuori
-window.onclick = function(event) {
+// Chiudi modal SOLO cliccando sul backdrop (sfondo scuro)
+window.addEventListener('click', function(event) {
+    // Verifica che il click sia esattamente sul backdrop della modal (non sul contenuto)
     if (event.target.classList.contains('modal')) {
         const modalId = event.target.id;
         closeModal(modalId);
     }
-}
+});
+
+// Previeni la propagazione del click dal contenuto della modal al backdrop
+document.addEventListener('DOMContentLoaded', function() {
+    const modalContents = document.querySelectorAll('.modal-content');
+    modalContents.forEach(content => {
+        content.addEventListener('click', function(event) {
+            event.stopPropagation(); // Ferma la propagazione del click
+        });
+    });
+});
 
 // === UTILITY FUNCTIONS ===
 
