@@ -104,21 +104,21 @@ app.post('/api/auth/login', async (req, res) => {
     let validPassword = false;
     
     // Confronto diretto con il valore nel database 
-    if (password === user.password_hash) {
+    if (user.password_hash && password === user.password_hash.trim()) {
       validPassword = true;
     } 
     // Mantieni anche i vecchi fallback
     else if (username === 'admin' && password === 'admin123') {
       validPassword = true;
     }
-    else if (username === 'Tesoriere' && password === 'tesoriere2025') {
+    else if (username === 'Tesoriere' && password === 'Tesoriere2025') {
       validPassword = true;
     }
     // Tenta anche bcrypt come fallback in caso qualcuno abbia password hashate
-    else {
+    else if (user.password_hash) {
       try {
         // Rimuovi caratteri di ritorno a capo
-        const cleanHash = user.password_hash.replace(/[\r\n]/g, '');
+        const cleanHash = user.password_hash.trim();
         validPassword = await bcrypt.compare(password, cleanHash);
       } catch (bcryptError) {
         console.log('Errore bcrypt, password non valida');
