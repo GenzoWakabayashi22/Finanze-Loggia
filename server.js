@@ -67,9 +67,12 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+// Ruoli con permessi di amministrazione
+const ADMIN_ROLES = ['admin', 'tesoriere'];
+
 // Middleware: solo admin o tesoriere possono modificare/cancellare dati
 const requireAdmin = (req, res, next) => {
-  if (req.user.role !== 'admin' && req.user.role !== 'tesoriere') {
+  if (!ADMIN_ROLES.includes(req.user.role)) {
     return res.status(403).json({ error: 'Permesso negato: solo l\'admin o il tesoriere possono modificare o cancellare.' });
   }
   next();
