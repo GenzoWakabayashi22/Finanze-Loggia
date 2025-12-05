@@ -67,10 +67,10 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Middleware: solo admin può modificare/cancellare dati
+// Middleware: solo admin o tesoriere possono modificare/cancellare dati
 const requireAdmin = (req, res, next) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ error: 'Permesso negato: solo l\'admin può modificare o cancellare.' });
+  if (req.user.role !== 'admin' && req.user.role !== 'tesoriere') {
+    return res.status(403).json({ error: 'Permesso negato: solo l\'admin o il tesoriere possono modificare o cancellare.' });
   }
   next();
 };

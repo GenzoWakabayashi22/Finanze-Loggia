@@ -214,8 +214,8 @@ function showMainApp() {
     // Mostra info utente con ruolo
     document.getElementById('userWelcome').textContent = `Benvenuto, ${currentUser.username} (${currentUser.role})`;
     
-    // Nascondi bottoni se non admin
-    const isAdmin = currentUser.role === 'admin';
+    // Nascondi bottoni se non admin o tesoriere
+    const isAdmin = currentUser.role === 'admin' || currentUser.role === 'tesoriere';
     
     const addTransactionBtn = document.querySelector('button[onclick="openModal(\'addTransactionModal\')"]');
     const manageCategoriesBtn = document.querySelector('button[onclick="openModal(\'manageCategoriesModal\')"]');
@@ -281,7 +281,7 @@ async function loadTransactions() {
             }
         });
         
-        const isAdmin = currentUser && currentUser.role === 'admin';
+        const isAdmin = currentUser && (currentUser.role === 'admin' || currentUser.role === 'tesoriere');
         
         if (response.ok) {
             const data = await response.json();
@@ -347,7 +347,7 @@ function displayModalTransactions() {
     const endIndex = startIndex + modalTableLimit;
     const pageTransactions = filteredTransactions.slice(startIndex, endIndex);
     
-    const isAdmin = currentUser && currentUser.role === 'admin';
+    const isAdmin = currentUser && (currentUser.role === 'admin' || currentUser.role === 'tesoriere');
     displayTransactions(pageTransactions, container, isAdmin);
     updateModalPagination();
 }
@@ -404,8 +404,8 @@ function displayTransactions(transactions, container, showActions = false) {
 
 async function editTransaction(id) {
     // Controllo permessi
-    if (!currentUser || currentUser.role !== 'admin') {
-        alert("Solo l'admin può modificare le transazioni.");
+    if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'tesoriere')) {
+        alert("Solo l'admin o il tesoriere può modificare le transazioni.");
         return;
     }
     
@@ -465,8 +465,8 @@ async function editTransaction(id) {
 
 async function deleteTransaction(id) {
     // Controllo permessi
-    if (!currentUser || currentUser.role !== 'admin') {
-        alert("Solo l'admin può eliminare le transazioni.");
+    if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'tesoriere')) {
+        alert("Solo l'admin o il tesoriere può eliminare le transazioni.");
         return;
     }
     
@@ -511,8 +511,8 @@ async function handleAddTransaction(event) {
     event.preventDefault();
     
     // Controllo permessi
-    if (!currentUser || currentUser.role !== 'admin') {
-        alert("Solo l'admin può inserire o modificare transazioni.");
+    if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'tesoriere')) {
+        alert("Solo l'admin o il tesoriere può inserire o modificare transazioni.");
         return;
     }
     
@@ -619,7 +619,7 @@ async function loadCategoriesManagement() {
 
 function displayCategoriesManagement() {
     const container = document.getElementById('categoriesManagementContainer');
-    const isAdmin = currentUser && currentUser.role === 'admin';
+    const isAdmin = currentUser && (currentUser.role === 'admin' || currentUser.role === 'tesoriere');
     
     let html = `
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
@@ -705,8 +705,8 @@ let editingCategoryType = null;
 
 function openAddCategoryModal() {
     // Controllo permessi
-    if (!currentUser || currentUser.role !== 'admin') {
-        alert("Solo l'admin può inserire o modificare categorie.");
+    if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'tesoriere')) {
+        alert("Solo l'admin o il tesoriere può inserire o modificare categorie.");
         return;
     }
     
@@ -716,8 +716,8 @@ function openAddCategoryModal() {
 
 function editCategory(tipo, id, nome, descrizione) {
     // Controllo permessi
-    if (!currentUser || currentUser.role !== 'admin') {
-        alert("Solo l'admin può modificare le categorie.");
+    if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'tesoriere')) {
+        alert("Solo l'admin o il tesoriere può modificare le categorie.");
         return;
     }
     
@@ -740,8 +740,8 @@ function editCategory(tipo, id, nome, descrizione) {
 
 async function deleteCategory(tipo, id) {
     // Controllo permessi
-    if (!currentUser || currentUser.role !== 'admin') {
-        alert("Solo l'admin può eliminare le categorie.");
+    if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'tesoriere')) {
+        alert("Solo l'admin o il tesoriere può eliminare le categorie.");
         return;
     }
     
@@ -782,8 +782,8 @@ async function handleAddCategory(event) {
     event.preventDefault();
     
     // Controllo permessi
-    if (!currentUser || currentUser.role !== 'admin') {
-        alert("Solo l'admin può inserire o modificare categorie.");
+    if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'tesoriere')) {
+        alert("Solo l'admin o il tesoriere può inserire o modificare categorie.");
         return;
     }
     

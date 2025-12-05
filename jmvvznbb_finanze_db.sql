@@ -506,7 +506,7 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
-  `role` enum('admin','viewer') DEFAULT 'viewer',
+  `role` enum('admin','viewer','tesoriere') DEFAULT 'viewer',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `last_login` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
@@ -518,7 +518,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `password_hash`, `role`, `created_at`, `last_login`) VALUES
 (1, 'admin', 'Kilwinning2025', 'admin', '2025-06-04 16:00:29', NULL),
 (2, 'Fratello', 'puntorosso', 'viewer', '2025-06-04 18:20:33', NULL),
-(3, 'Tesoriere', 'Tesoriere2025', 'viewer', '2025-06-05 06:30:34', NULL),
+(3, 'Tesoriere', 'Tesoriere2025', 'tesoriere', '2025-06-05 06:30:34', NULL),
 (7, 'tempuser', 'temppassword', 'admin', '2025-06-10 13:08:46', NULL);
 
 --
